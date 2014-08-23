@@ -8,6 +8,8 @@
 
 #import "InventoryMapViewController.h"
 #import "agilitechAppDelegate.h"
+#import "LocationItem.h"
+
 #define MEETERS_PER_MILE 1609.344
 
 @interface InventoryMapViewController ()
@@ -27,19 +29,16 @@
 -(void) placePins{
     agilitechAppDelegate *logisticsApp = (agilitechAppDelegate *) [[UIApplication sharedApplication] delegate];
     NSArray *inventoryData = [logisticsApp.sqliteController getCoordinateData];
+    
+    
     for (NSDictionary *arObjectData in inventoryData) {
-        NSNumber *ar_id = @([arObjectData[@"id"] intValue]);
-        arObject = [[ARObject alloc] initWithId:ar_id.intValue
-                                          title:arObjectData[@"title"]
-                                    coordinates:CLLocationCoordinate2DMake([arObjectData[@"lat"] doubleValue],
-                                                                           [arObjectData[@"lon"] doubleValue])
-                             andCurrentLocation:newLocation];
-        
-        x_pos = [self.locationMath getARObjectXPosition:arObject]-arObject.view.frame.size.width;
-        
-        geoobjectOverlays[ar_id] = arObject;
-        geoobjectPositions[ar_id] = @(x_pos);
-        geoobjectVerts[ar_id] = @1;
+      //  NSNumber *ar_id = @([arObjectData[@"id"] intValue]);
+        CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([arObjectData[@"lat"] doubleValue],
+                                                                       [arObjectData[@"lon"] doubleValue]);
+        NSString *name = arObjectData[@"title"];
+        LocationItem *locationItem = [[LocationItem alloc] initWithName:name address:@"" coordinate:coordinate];
+        [_mapView addAnnotation:locationItem];
+      
     }
     
 }
